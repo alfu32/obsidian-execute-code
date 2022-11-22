@@ -82,6 +82,11 @@ export interface ExecutorSettings {
 	cArgs: string;
 	cUseMain: boolean;
 	cInject: string;
+	zigPath: string;
+	zigArgs: string;
+	zigFileExtension: string;
+	zigRun: "script"|"main"|"test";
+	zigInject: string;
 
 	jsInteractive: boolean;
 	tsInteractive: boolean;
@@ -103,6 +108,7 @@ export interface ExecutorSettings {
 	haskellInteractive: boolean;
 	scalaInteractive: boolean;
 	cInteractive: boolean;
+	zigInteractive: boolean;
 }
 
 
@@ -188,6 +194,11 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	cArgs: "",
 	cUseMain: true,
 	cInject: "",
+	zigPath: "zig",
+	zigArgs: "",
+	zigFileExtension: "zig",
+	zigRun: "main",
+	zigInject: "",
 
 	jsInteractive: true,
 	tsInteractive: false,
@@ -208,5 +219,6 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	mathematicaInteractive: false,
 	haskellInteractive: false,
 	scalaInteractive: false,
-	cInteractive: false
+	cInteractive: false,
+	zigInteractive: false
 }
