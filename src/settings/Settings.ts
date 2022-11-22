@@ -127,6 +127,11 @@ export interface ExecutorSettings {
 	applescriptArgs: string;
 	applescriptFileExtension: string;
 	applescriptInject: string;
+	zigPath: string;
+	zigArgs: string;
+	zigFileExtension: string;
+	zigRun: "script"|"main"|"test";
+	zigInject: string;
 
 	jsInteractive: boolean;
 	tsInteractive: boolean;
@@ -158,6 +163,7 @@ export interface ExecutorSettings {
 	octaveInteractive: boolean;
 	maximaInteractive: boolean;
 	applescriptInteractive: boolean;
+	zigInteractive: boolean;
 }
 
 
@@ -287,7 +293,12 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	applescriptPath: "osascript",
 	applescriptArgs: "",
 	applescriptFileExtension: "scpt",
-	applescriptInject: "",
+	applescriptInject: "",	zigPath: "zig",
+	zigArgs: "",
+	zigFileExtension: "zig",
+	zigRun: "main",
+	zigInject: "",
+
 	jsInteractive: true,
 	tsInteractive: false,
 	csInteractive: false,
@@ -312,6 +323,7 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	scalaInteractive: false,
 	fsharpInteractive: false,
 	cInteractive: false,
+	zigInteractive: false,
 	racketInteractive: false,
 	rubyInteractive: false,
 	sqlInteractive: false,

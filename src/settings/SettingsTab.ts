@@ -1,6 +1,7 @@
 import {App, PluginSettingTab, Setting} from "obsidian";
 import ExecuteCodePlugin, {canonicalLanguages, LanguageId} from "src/main";
 import {DISPLAY_NAMES} from "./languageDisplayName";
+import makeZigSettings from "./per-lang/makeZigSettings";
 import makeCppSettings from "./per-lang/makeCppSettings";
 import makeCSettings from "./per-lang/makeCSettings.js";
 import makeCsSettings from "./per-lang/makeCsSettings";
@@ -206,6 +207,9 @@ export class SettingsTab extends PluginSettingTab {
 
 		// ========== Applescript ============
 		makeApplescriptSettings(this, this.makeContainerFor("applescript"));
+
+		// ========== Zig ===========
+		makeZigSettings(this, this.makeContainerFor("zig"));
 
 		this.focusContainer(this.plugin.settings.lastOpenLanguageTab || canonicalLanguages[0]);
 	}

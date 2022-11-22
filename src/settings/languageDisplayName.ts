@@ -22,6 +22,7 @@ export const DISPLAY_NAMES: Record<LanguageId, string> = {
 	scala: "Scala",
 	racket: "Racket",
 	c: "C",
+    zig: "Zig",
 	fsharp: "F#",
 	ruby: "Ruby",
 	dart: "Dart",
