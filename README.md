@@ -616,6 +616,35 @@ plot2d(sin(x), [x,0,%pi]);
 </details>
 
 <details>
+<summary>V language</summary>
+
+- Requirements: v is installed and accessible in the path.
+
+```v
+fn main() {
+    areas := ['game', 'web', 'tools', 'science', 'systems',
+              'embedded', 'drivers', 'GUI', 'mobile']
+    for area in areas {
+        println('Hello, ${area} developers!')
+    }
+}
+```
+
+```vsh
+
+import time
+import net.http
+resp := http.get('https://vlang.io/utc_now') or {
+    println('failed to fetch data from the server')
+    return
+}
+t := time.unix(resp.body.int())
+println(t.format()) // 2019-08-16 17:48
+
+```
+</details>
+
+<details>
 <summary>Zig</summary>
 
 - Requirements: Zig is installed and the correct path is set in the settings.

@@ -1,7 +1,6 @@
 import {App, PluginSettingTab, Setting} from "obsidian";
 import ExecuteCodePlugin, {canonicalLanguages, LanguageId} from "src/main";
 import {DISPLAY_NAMES} from "./languageDisplayName";
-import makeZigSettings from "./per-lang/makeZigSettings";
 import makeCppSettings from "./per-lang/makeCppSettings";
 import makeCSettings from "./per-lang/makeCSettings.js";
 import makeCsSettings from "./per-lang/makeCsSettings";
@@ -32,6 +31,8 @@ import makeSQLSettings from "./per-lang/makeSQLSettings";
 import makeOctaviaSettings from "./per-lang/makeOctaveSettings";
 import makeMaximaSettings from "./per-lang/makeMaximaSettings";
 import makeApplescriptSettings from "./per-lang/makeApplescriptSettings";
+import makeZigSettings from "./per-lang/makeZigSettings";
+import makeVlangSettings from "./per-lang/makeVlangSettings";
 
 
 /**
@@ -211,6 +212,9 @@ export class SettingsTab extends PluginSettingTab {
 		// ========== Zig ===========
 		makeZigSettings(this, this.makeContainerFor("zig"));
 
+
+		// ========== Vlang ===========
+		makeVlangSettings(this, this.makeContainerFor("vlang"));
 		this.focusContainer(this.plugin.settings.lastOpenLanguageTab || canonicalLanguages[0]);
 	}
 

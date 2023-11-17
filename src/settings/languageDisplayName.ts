@@ -22,7 +22,6 @@ export const DISPLAY_NAMES: Record<LanguageId, string> = {
 	scala: "Scala",
 	racket: "Racket",
 	c: "C",
-    zig: "Zig",
 	fsharp: "F#",
 	ruby: "Ruby",
 	dart: "Dart",
@@ -31,4 +30,6 @@ export const DISPLAY_NAMES: Record<LanguageId, string> = {
 	octave: "Octave",
 	maxima: "Maxima",
     applescript: "Applescript",
+    zig: "Zig",
+    vlang: "V-lang",
 } as const;

@@ -132,6 +132,9 @@ export interface ExecutorSettings {
 	zigFileExtension: string;
 	zigRun: "script"|"main"|"test";
 	zigInject: string;
+    vlangArgs: string;
+	vlangFileExtension: string;
+    vlangPath: string;
 
 	jsInteractive: boolean;
 	tsInteractive: boolean;
@@ -164,6 +167,7 @@ export interface ExecutorSettings {
 	maximaInteractive: boolean;
 	applescriptInteractive: boolean;
 	zigInteractive: boolean;
+	vlangInteractive: boolean;
 }
 
 
@@ -172,7 +176,7 @@ export interface ExecutorSettings {
  */
 export const DEFAULT_SETTINGS: ExecutorSettings = {
 	lastOpenLanguageTab: undefined,
-	
+
 	timeout: 10000,
 	allowInput: true,
 	wslMode: false,
@@ -293,11 +297,15 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	applescriptPath: "osascript",
 	applescriptArgs: "",
 	applescriptFileExtension: "scpt",
-	applescriptInject: "",	zigPath: "zig",
+	applescriptInject: "",
+	zigPath: "zig",
 	zigArgs: "",
 	zigFileExtension: "zig",
 	zigRun: "main",
 	zigInject: "",
+	vlangPath: "v",
+	vlangArgs: "run",
+	vlangFileExtension: "v",
 
 	jsInteractive: true,
 	tsInteractive: false,
@@ -330,4 +338,5 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	octaveInteractive: false,
 	maximaInteractive: false,
 	applescriptInteractive: false,
+	vlangInteractive: false
 }
