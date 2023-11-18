@@ -25,7 +25,7 @@ export default abstract class ZigExecutor extends NonInteractiveCodeExecutor {
 			mkdir(this.project)
 			const child = child_process.spawn(this.settings.zigPath, ["init-exe"], {
 				cwd:this.project,
-				env: process.env,
+				env: {...process.env,...JSON.parse(this.settings.environmentVariables)},
 				shell: this.usesShell
 			});
 			child.addListener("close",_maybe_success_handler)
@@ -69,7 +69,10 @@ export default abstract class ZigExecutor extends NonInteractiveCodeExecutor {
 			const childArgs = [...runnerArgs,...args.split(" ")];
 			const child = child_process.spawn(this.settings.zigPath, childArgs, {
 				cwd:this.project,
-				env: process.env,
+				env: {
+					...process.env,
+					...JSON.parse(this.settings.environmentVariables)
+				},
 				shell: this.usesShell
 			});
 			// Set resolve callback to resolve the promise in the child_process.on('close', ...) listener from super.handleChildOutput

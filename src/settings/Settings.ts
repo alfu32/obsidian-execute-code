@@ -4,6 +4,7 @@ import {LanguageId} from "src/main";
  * Interface that contains all the settings for the extension.
  */
 export interface ExecutorSettings {
+	environmentVariables: string;
 	lastOpenLanguageTab: LanguageId | undefined
 	
 	timeout: number;
@@ -135,6 +136,7 @@ export interface ExecutorSettings {
     vlangArgs: string;
 	vlangFileExtension: string;
     vlangPath: string;
+    vlangRun: string;
 
 	jsInteractive: boolean;
 	tsInteractive: boolean;
@@ -168,6 +170,7 @@ export interface ExecutorSettings {
 	applescriptInteractive: boolean;
 	zigInteractive: boolean;
 	vlangInteractive: boolean;
+	vInteractive: boolean;
 }
 
 
@@ -175,6 +178,7 @@ export interface ExecutorSettings {
  * The default settings for the extensions as implementation of the ExecutorSettings interface.
  */
 export const DEFAULT_SETTINGS: ExecutorSettings = {
+	environmentVariables: `{ "env":"obsidian",PATH: '/run/user/1001/fnm_multishells/234293_1700219773075/bin:/home/devlin/.local/share/fnm:/home/devlin/.bun/bin:/home/devlin/.cargo/bin:/run/user/1001/fnm_multishells/234104_1700219772058/bin:/home/devlin/.local/share/fnm:/home/devlin/.bun/bin:/home/devlin/.sdkman/candidates/maven/current/bin:/home/devlin/.sdkman/candidates/kotlin/current/bin:/home/devlin/.sdkman/candidates/java/current/bin:/home/devlin/.sdkman/candidates/groovy/current/bin:/home/devlin/.sdkman/candidates/gradle/current/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin:/usr/local/sbin:/usr/local/bin:/snap/bin:/snap/bin:/home/devlin/.local/share/JetBrains/Toolbox/scripts:/home/devlin/.local/share/JetBrains/Toolbox/scripts', }`,
 	lastOpenLanguageTab: undefined,
 
 	timeout: 10000,
@@ -306,6 +310,7 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	vlangPath: "v",
 	vlangArgs: "run",
 	vlangFileExtension: "v",
+	vlangRun: "main",
 
 	jsInteractive: true,
 	tsInteractive: false,
@@ -332,6 +337,7 @@ export const DEFAULT_SETTINGS: ExecutorSettings = {
 	fsharpInteractive: false,
 	cInteractive: false,
 	zigInteractive: false,
+	vInteractive: false,
 	racketInteractive: false,
 	rubyInteractive: false,
 	sqlInteractive: false,

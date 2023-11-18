@@ -23,5 +23,5 @@ export default (tab: SettingsTab, containerEl: HTMLElement) => {
                 console.log('V lang args set to: ' + value);
                 await tab.plugin.saveSettings();
             }));
-    tab.makeInjectSetting(containerEl, "vlang");
+    tab.makeInjectSetting(containerEl, "v");
 }

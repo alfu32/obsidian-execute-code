@@ -23,10 +23,10 @@ import ExecutorManagerView, {
 
 import runAllCodeBlocks from './runAllCodeBlocks';
 
-export const languageAliases = ["javascript", "typescript", "bash", "csharp", "wolfram", "nb", "wl", "hs", "py", "scpt"] as const;
+export const languageAliases = ["javascript", "typescript", "bash", "csharp", "wolfram", "nb", "wl", "hs", "py", "scpt","zig"] as const;
 export const canonicalLanguages = ["js", "ts", "cs", "lean", "lua", "python", "cpp", "prolog", "shell", "groovy", "r",
 	"go", "rust", "java", "powershell", "kotlin", "mathematica", "haskell", "scala", "racket", "fsharp", "c", "dart",
-	"ruby", "batch", "sql", "octave", "maxima", "applescript", "zig","vlang"] as const;
+	"ruby", "batch", "sql", "octave", "maxima", "applescript", "zig","v"] as const;
 export const supportedLanguages = [...languageAliases, ...canonicalLanguages] as const;
 export type LanguageId = typeof canonicalLanguages[number];
 
@@ -365,11 +365,13 @@ export default class ExecuteCodePlugin extends Plugin {
 				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
 				this.runCodeInShell(transformedCode, out, button, this.settings.zigPath, this.settings.zigArgs, "zig", language, file);
 			})
-		}else if(language === "vlang") {
+		}else if(language === "v") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
-				this.runCodeInShell(transformedCode, out, button, this.settings.zigPath, this.settings.zigArgs, "zig", language, file);
+				console.log("run-click.eventlistener.v",{
+					srcCode, out, button, vlangPath: this.settings.vlangPath, vlangArgs:this.settings.vlangArgs, lang:"vlang", language, file
+				})
+				this.runCodeInShell(srcCode, out, button, this.settings.vlangPath, this.settings.vlangArgs, "vlang", language, file);
 			})
 		} else if (language === "ruby") {
 			button.addEventListener("click", async () => {

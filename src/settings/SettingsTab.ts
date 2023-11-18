@@ -101,6 +101,14 @@ export class SettingsTab extends PluginSettingTab {
 						await this.plugin.saveSettings();
 					}));
 		}
+		new Setting(containerEl)
+		.setName('environment variables ( json )')
+		.addTextArea(text => text
+			.setValue(this.plugin.settings.environmentVariables)
+			.onChange(async (value) => {
+				this.plugin.settings.environmentVariables = value;
+				await this.plugin.saveSettings();
+			}));
 
 		// TODO setting per language that requires main function if main function should be implicitly made or not, if not, non-main blocks will not have a run button
 
@@ -214,7 +222,7 @@ export class SettingsTab extends PluginSettingTab {
 
 
 		// ========== Vlang ===========
-		makeVlangSettings(this, this.makeContainerFor("vlang"));
+		makeVlangSettings(this, this.makeContainerFor("v"));
 		this.focusContainer(this.plugin.settings.lastOpenLanguageTab || canonicalLanguages[0]);
 	}
 

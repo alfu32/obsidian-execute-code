@@ -3,17 +3,17 @@ import * as child_process from "child_process";
 import type {ChildProcessWithoutNullStreams} from "child_process";
 import type {Outputter} from "src/Outputter";
 import type {ExecutorSettings} from "src/settings/Settings";
-import {mkdirSync as mkdir,existsSync as is,writeFileSync as write,readFileSync as read,readdirSync as ls} from 'fs';
+import {mkdirSync as mkdir,existsSync as is,writeFileSync as write,readFileSync as read,readdirSync as ls, writeFileSync, writeSync, mkdirSync, existsSync} from 'fs';
 import {resolve as resolvePath} from 'path';
 import NodeJSExecutor from './NodeJSExecutor';
 import { mainModule } from 'process';
 import test from 'node:test';
-export default abstract class ZigExecutor extends NonInteractiveCodeExecutor {
+export default abstract class VlangExecutor extends NonInteractiveCodeExecutor {
 	
-	language: "vlang";
+	language: "v";
 	project:string;
 
-	constructor(settings: ExecutorSettings, file: string, language: "vlang") {
+	constructor(settings: ExecutorSettings, file: string, language: "v") {
 		super(settings, false, file, language);
 		this.initProjectShell()
 	}
@@ -21,60 +21,37 @@ export default abstract class ZigExecutor extends NonInteractiveCodeExecutor {
 		return new Promise((resolve:(value:unknown)=>void,reject:(reason?:any)=>void) =>{
 			// just a call to initialize tempFileId
 			this.tempFileId = Date.now().toString();
-			this.project=resolvePath(process.env.HOME,`vlang-${this.tempFileId}`)
-			mkdir(this.project)
-			console.log({scope:"obsidian.execute-code.vlang-executor",message:{
+			this.project=resolvePath(process.env.HOME)
+			console.log({scope:"obsidian.execute-code.v-executor.init",message:{
 				cwd:this.project,
-				env: process.env,
+				env: {...process.env,...JSON.parse(this.settings.environmentVariables)},
 				shell: this.usesShell
 			}})
-			const child = child_process.spawn(this.settings.vlangPath, this.settings.vlangArgs.split(" "), {
-				cwd:this.project,
-				env: process.env,
-				shell: this.usesShell
-			});
-			child.addListener("close",_maybe_success_handler)
-			child.addListener("disconnect",reject)
-			child.addListener("error",reject)
-			child.addListener("exit",_maybe_success_handler)
-			child.addListener("message",_message_handler)
-			child.addListener("spawn",_message_handler)
-			function _maybe_success_handler(code:number,signal:NodeJS.Signals) :void{
-				if(code===0){
-					resolve({})
-				}else{
-					reject({})
-				}
-			}
-			function _message_handler(...args:[]) :void{
-				console.log({scope:"obsidian.execute-code.vlang-executor",message:args})
-			}
+			this.file = resolvePath(this.project,`v-${this.tempFileId}.vsh`)
+			resolve(this)
 		})
 	}
 
 	override run(codeBlockContent: string, outputter: Outputter, cmd: string, args: string, ext: string) {
+		console.log({
+			scope:"obsidian.execute-code.v-executor.run",
+			codeBlockContent,
+			outputter,
+			cmd,
+			args,
+			ext,
+			executor:this
+		})
 		
 		// Run code with a main block
-		if (this.settings.zigRun==="script") {
-			write(resolvePath(this.project,"src","main.zig"),`pub fn main() !void {
-				${codeBlockContent}
-			}`)
-		} else {
-			write(resolvePath(this.project,"src","main.zig"),codeBlockContent)
-		}
-		let runnerArgs = ["build","run"];
-		if (this.settings.zigRun==="test") {
-			runnerArgs = ["build","test"];
-		} else {
-			runnerArgs = ["build","run"];
-		}
+		writeFileSync(this.file,codeBlockContent)
 
 		// Run code without a main block
 		return new Promise<void>((resolve, reject) => {
-			const childArgs = [...runnerArgs,...args.split(" ")];
-			const child = child_process.spawn(this.settings.zigPath, childArgs, {
+			const childArgs = ["run",this.file];
+			const child = child_process.spawn(this.settings.vlangPath, childArgs, {
 				cwd:this.project,
-				env: process.env,
+				env: {...process.env,...JSON.parse(this.settings.environmentVariables)},
 				shell: this.usesShell
 			});
 			// Set resolve callback to resolve the promise in the child_process.on('close', ...) listener from super.handleChildOutput

@@ -47,7 +47,13 @@ export default class NonInteractiveCodeExecutor extends Executor {
 					args.push(tempFileName);	
 				}
 				
-				const child = child_process.spawn(cmd, args, {env: process.env, shell: this.usesShell});
+				const child = child_process.spawn(cmd, args, {
+					env: {
+						...process.env,
+						...JSON.parse(this.settings.environmentVariables)
+					},
+					shell: this.usesShell
+				});
 				
 				this.handleChildOutput(child, outputter, tempFileName).then(() => {
 					this.tempFileId = undefined; // Reset the file id to use a new file next time

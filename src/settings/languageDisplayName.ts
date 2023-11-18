@@ -31,5 +31,5 @@ export const DISPLAY_NAMES: Record<LanguageId, string> = {
 	maxima: "Maxima",
     applescript: "Applescript",
     zig: "Zig",
-    vlang: "V-lang",
+    v: "V-lang",
 } as const;
