@@ -12,6 +12,7 @@ export default abstract class VlangExecutor extends NonInteractiveCodeExecutor {
 	
 	language: "v";
 	project:string;
+	tempFileName: string;
 
 	constructor(settings: ExecutorSettings, file: string, language: "v") {
 		super(settings, false, file, language);
@@ -27,7 +28,8 @@ export default abstract class VlangExecutor extends NonInteractiveCodeExecutor {
 				env: {...process.env,...JSON.parse(this.settings.environmentVariables)},
 				shell: this.usesShell
 			}})
-			this.file = resolvePath(this.project,`v-${this.tempFileId}.vsh`)
+			this.tempFileName=`v-${this.tempFileId}.vsh`
+			this.file = resolvePath(this.project,this.tempFileName)
 			resolve(this)
 		})
 	}
@@ -48,7 +50,7 @@ export default abstract class VlangExecutor extends NonInteractiveCodeExecutor {
 
 		// Run code without a main block
 		return new Promise<void>((resolve, reject) => {
-			const childArgs = ["run",this.file];
+			const childArgs = [...args.split(" "),this.file];
 			const child = child_process.spawn(this.settings.vlangPath, childArgs, {
 				cwd:this.project,
 				env: {...process.env,...JSON.parse(this.settings.environmentVariables)},
@@ -56,7 +58,7 @@ export default abstract class VlangExecutor extends NonInteractiveCodeExecutor {
 			});
 			// Set resolve callback to resolve the promise in the child_process.on('close', ...) listener from super.handleChildOutput
 			this.resolveRun = resolve;
-			this.handleChildOutput(child, outputter, this.tempFileId);
+			this.handleChildOutput(child, outputter, this.tempFileName);
 		});
 	}
 

@@ -1,4 +1,4 @@
-import {FileView, MarkdownRenderer, Plugin} from 'obsidian';
+import {Component, FileView, MarkdownRenderer, Plugin,TextComponent} from 'obsidian';
 
 import {Outputter, TOGGLE_HTML_SIGIL} from "./Outputter";
 import type {ExecutorSettings} from "./settings/Settings";
@@ -23,7 +23,7 @@ import ExecutorManagerView, {
 
 import runAllCodeBlocks from './runAllCodeBlocks';
 
-export const languageAliases = ["javascript", "typescript", "bash", "csharp", "wolfram", "nb", "wl", "hs", "py", "scpt","zig"] as const;
+export const languageAliases = ["javascript", "typescript", "bash", "csharp", "wolfram", "nb", "wl", "hs", "py", "scpt", "zig","v"] as const;
 export const canonicalLanguages = ["js", "ts", "cs", "lean", "lua", "python", "cpp", "prolog", "shell", "groovy", "r",
 	"go", "rust", "java", "powershell", "kotlin", "mathematica", "haskell", "scala", "racket", "fsharp", "c", "dart",
 	"ruby", "batch", "sql", "octave", "maxima", "applescript", "zig","v"] as const;
@@ -40,6 +40,7 @@ const hasButtonClass = "has-run-code-button";
 export default class ExecuteCodePlugin extends Plugin {
 	settings: ExecutorSettings;
 	executors: ExecutorContainer;
+	components: {[key:string]:Component} = {}
 
 	/**
 	 * Preparations for the plugin (adding buttons, html elements and event listeners).
@@ -58,9 +59,14 @@ export default class ExecuteCodePlugin extends Plugin {
 		// live preview renderers
 		supportedLanguages.forEach(l => {
 			console.debug(`Registering renderer for ${l}.`)
-			this.registerMarkdownCodeBlockProcessor(`run-${l}`, async (src, el, _ctx) => {
-				await MarkdownRenderer.renderMarkdown('```' + l + '\n' + src + (src.endsWith('\n') ? '' : '\n') + '```', el, _ctx.sourcePath, null);
-			});
+			if(!this.components[l]){
+				this.registerMarkdownCodeBlockProcessor(`run-${l}`, async (src, el, _ctx) => {
+					const component = new Component()
+					this.components[l]=new Component()
+					// console.log(`Registering renderer for ${l}.`,{src, el, _ctx,l},this.components[l],this.components)
+					await MarkdownRenderer.renderMarkdown('```' + l + ' run\n' + src + (src.endsWith('\n') ? '' : '\n') + '```', el, _ctx.sourcePath, this.components[l]);
+				});
+			}
 		});
 
 		//executor manager
@@ -362,16 +368,49 @@ export default class ExecuteCodePlugin extends Plugin {
 		} else if(language === "zig") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				const transformedCode = await new CodeInjector(this.app, this.settings, language).injectCode(srcCode);
-				this.runCodeInShell(transformedCode, out, button, this.settings.zigPath, this.settings.zigArgs, "zig", language, file);
+				//// console.log(
+				//// 	"button-click.zig",
+				//// 	{
+				//// 	context:this,
+				//// 	srcCode,
+				//// 	language,
+				//// 	file,
+				//// 	
+				//// })
+				const codeInjector = new CodeInjector(this.app, this.settings, language);
+				//// console.log(
+				//// 	"button-click.zig",{codeInjector}
+				//// )
+				let code = await codeInjector.injectCode(srcCode)
+				let args="run"
+				if(!code.contains("pub fn main() ") && !code.contains("test ")){
+					if(code.contains("pub ") || code.contains("export ")){
+						code=`
+							${code}
+						
+							pub fn main() !void {}
+						`
+					} else {
+						code=`
+							pub fn main() !void {
+								${code}
+							}
+						`
+					}
+				}else if(code.contains("test ")){
+					args="test"
+				}else if(!code.contains("pub fn main() ") && !code.contains("test ")){
+					args="run"
+				}
+				this.runCodeInShell(code, out, button, this.settings.zigPath, args, "zig", language, file,);
 			})
 		}else if(language === "v") {
 			button.addEventListener("click", async () => {
 				button.className = runButtonDisabledClass;
-				console.log("run-click.eventlistener.v",{
-					srcCode, out, button, vlangPath: this.settings.vlangPath, vlangArgs:this.settings.vlangArgs, lang:"vlang", language, file
-				})
-				this.runCodeInShell(srcCode, out, button, this.settings.vlangPath, this.settings.vlangArgs, "vlang", language, file);
+				/// console.log("run-click.eventlistener.v",{
+				/// 	srcCode, out, button, vlangPath: this.settings.vlangPath, vlangArgs:this.settings.vlangArgs, lang:"vlang", language, file,
+				/// })
+				this.runCodeInShell(srcCode, out, button, this.settings.vlangPath, this.settings.vlangArgs, "vlang", language, file,);
 			})
 		} else if (language === "ruby") {
 			button.addEventListener("click", async () => {
@@ -446,7 +485,7 @@ export default class ExecuteCodePlugin extends Plugin {
 	private runCode(codeBlockContent: string, outputter: Outputter, button: HTMLButtonElement, cmd: string, cmdArgs: string, ext: string, language: LanguageId, file: string) {
 		outputter.startBlock();
 		const executor = this.executors.getExecutorFor(file, language, false);
-		executor.run(codeBlockContent, outputter, cmd, cmdArgs, ext).then(() => {
+				executor.run(codeBlockContent, outputter, cmd, cmdArgs, ext).then(() => {
 			button.className = runButtonClass;
 			outputter.closeInput();
 			outputter.finishBlock();
